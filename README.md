@@ -1,2 +1,2 @@
 # PalindromeCheckerApp
-//working of usecase 2
+working of usecase 2
