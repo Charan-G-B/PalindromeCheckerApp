@@ -1,113 +1,78 @@
 import java.util.*;
 
-// 1️⃣ Strategy Interface
-interface PalindromeStrategy {
-    boolean checkPalindrome(String input);
-}
+public class PalindromeCheckerApp {
 
-// 2️⃣ Stack-Based Strategy
-class StackStrategy implements PalindromeStrategy {
+    // 🔹 Algorithm 1: Two Pointer Approach
+    public static boolean twoPointerCheck(String input) {
+        String str = input.replaceAll("\\s+", "").toLowerCase();
+        int start = 0;
+        int end = str.length() - 1;
 
-    @Override
-    public boolean checkPalindrome(String input) {
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
 
-        String normalized = input.replaceAll("\\s+", "").toLowerCase();
+    // 🔹 Algorithm 2: Stack Approach
+    public static boolean stackCheck(String input) {
+        String str = input.replaceAll("\\s+", "").toLowerCase();
         Stack<Character> stack = new Stack<>();
 
-        // Push all characters into stack
-        for (char ch : normalized.toCharArray()) {
+        for (char ch : str.toCharArray()) {
             stack.push(ch);
         }
 
-        // Compare original with reversed (stack pop)
-        for (char ch : normalized.toCharArray()) {
+        for (char ch : str.toCharArray()) {
             if (ch != stack.pop()) {
                 return false;
             }
         }
-
         return true;
     }
-}
 
-// 3️⃣ Deque-Based Strategy
-class DequeStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean checkPalindrome(String input) {
-
-        String normalized = input.replaceAll("\\s+", "").toLowerCase();
-        Deque<Character> deque = new ArrayDeque<>();
-
-        // Add characters to deque
-        for (char ch : normalized.toCharArray()) {
-            deque.addLast(ch);
-        }
-
-        // Compare from both ends
-        while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) {
-                return false;
-            }
-        }
-
-        return true;
+    // 🔹 Algorithm 3: Reverse String Approach
+    public static boolean reverseCheck(String input) {
+        String str = input.replaceAll("\\s+", "").toLowerCase();
+        String reversed = new StringBuilder(str).reverse().toString();
+        return str.equals(reversed);
     }
-}
-
-// 4️⃣ Context Class
-class PalindromeChecker {
-
-    private PalindromeStrategy strategy;
-
-    public PalindromeChecker(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public void setStrategy(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean execute(String input) {
-        return strategy.checkPalindrome(input);
-    }
-}
-
-// 5️⃣ Main Application
-public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Choose Palindrome Checking Strategy:");
-        System.out.println("1. Stack Strategy");
-        System.out.println("2. Deque Strategy");
-        System.out.print("Enter choice (1 or 2): ");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // consume newline
-
         System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        PalindromeStrategy strategy;
+        // 🔥 Measure Two Pointer
+        long start1 = System.nanoTime();
+        boolean result1 = twoPointerCheck(input);
+        long end1 = System.nanoTime();
 
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else {
-            strategy = new DequeStrategy();
-        }
+        // 🔥 Measure Stack
+        long start2 = System.nanoTime();
+        boolean result2 = stackCheck(input);
+        long end2 = System.nanoTime();
 
-        PalindromeChecker checker = new PalindromeChecker(strategy);
+        // 🔥 Measure Reverse
+        long start3 = System.nanoTime();
+        boolean result3 = reverseCheck(input);
+        long end3 = System.nanoTime();
 
-        boolean result = checker.execute(input);
+        System.out.println("\nResults:");
+        System.out.println("Two Pointer Result: " + result1 + 
+                " | Time: " + (end1 - start1) + " ns");
 
-        if (result) {
-            System.out.println("The given string is a Palindrome.");
-        } else {
-            System.out.println("The given string is NOT a Palindrome.");
-        }
+        System.out.println("Stack Result: " + result2 + 
+                " | Time: " + (end2 - start2) + " ns");
+
+        System.out.println("Reverse Result: " + result3 + 
+                " | Time: " + (end3 - start3) + " ns");
 
         scanner.close();
     }
